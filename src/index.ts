@@ -263,7 +263,7 @@ export class Image {
     }
 
     if (options.Env || this.Env) {
-      [].push.apply(imageData.config.config.Env, options.Env || this.Env || []);
+      ([] as string[]).push.apply(imageData.config.config.Env, options.Env || this.Env || []);
     }
 
     if (options.WorkingDir || this.WorkingDir) {
