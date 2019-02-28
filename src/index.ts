@@ -92,14 +92,14 @@ export class Image {
 
   async addLayer(
       digest: string, uncompressedDigest: string, size: number,
-      urls?: string[]) {
+      urls?: string[], layerId?: string) {
     const imageData = await this.getImageData();
     let layerMediaType = 'application/vnd.oci.image.layer.v1.tar+gzip';
     if (imageData.manifest.mediaType.indexOf('docker') > -1) {
       layerMediaType = 'application/vnd.docker.image.rootfs.diff.tar.gzip';
     }
 
-    const layerResult = {mediaType: layerMediaType, digest, size, urls};
+    const layerResult = {mediaType: layerMediaType, digest, size, urls, layerId};
 
     imageData.manifest.layers.push(layerResult);
     imageData.config.rootfs.diff_ids.push(uncompressedDigest);
@@ -129,7 +129,8 @@ export class Image {
   addFiles(
       dir: string|{[dir: string]: string},
       targetDir?: string|packer.PackOptions,
-      options?: packer.PackOptions): Promise<{
+      options?: packer.PackOptions,
+      layerId?: string): Promise<{
     mediaType: string,
     digest: string,
     size: number,
@@ -172,7 +173,7 @@ export class Image {
       const uncompressedDigest = 'sha256:' + uncompressedHash.digest('hex');
 
       resolve(await this.addLayer(
-          result.digest, uncompressedDigest, result.contentLength));
+          result.digest, uncompressedDigest, result.contentLength, undefined, layerId));
     });
 
     this.pending.track(p);
