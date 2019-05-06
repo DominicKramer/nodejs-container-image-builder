@@ -35,6 +35,7 @@ export class DockerCredentialHelpers {
   auth(registry: string): Promise<DockerAuthResult> {
     const host = url.parse(registry).host || registry;
     // console.log('authing to registry ' + registry, ' with host ', host);
+    console.log(`dockerConfig=${JSON.stringify(this.dockerConfig, null, 2)} with host=${host} where registry=${registry}`);
     return new Promise((resolve, reject) => {
       if (!this.dockerConfig.credHelpers ||
           !this.dockerConfig.credHelpers[host]) {
